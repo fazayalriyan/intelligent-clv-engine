@@ -2,9 +2,32 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 import plotly.express as px
-import plotly.graph_objects as go
 import joblib
+import subprocess
+import sys
 from pathlib import Path
+
+# --- CLOUD AUTO-SETUP ---
+# If models don't exist (like on a fresh cloud server), build them automatically!
+def check_and_setup():
+    model_dir = Path(__file__).resolve().parents[1] / 'models'
+    if not (model_dir / 'xgboost_clv.pkl').exists():
+        with st.status("☁️ Cloud Environment Detected: Downloading data & training models...", expanded=True) as status:
+            scripts = [
+                "src/data/make_dataset.py",
+                "src/data/clean_data.py",
+                "src/features/build_features.py",
+                "src/models/train_model.py"
+            ]
+            for script in scripts:
+                st.write(f"⏳ Running `{script}`...")
+                result = subprocess.run([sys.executable, script], capture_output=True, text=True)
+                if result.returncode != 0:
+                    st.error(f"Error in {script}: {result.stderr}")
+                    st.stop()
+            status.update(label="✅ Setup complete! Loading dashboard...", state="complete", expanded=False)
+
+check_and_setup()
 
 # --- CONFIGURATION ---
 st.set_page_config(
@@ -42,7 +65,6 @@ if page == "Business Intelligence":
     using K-Means Clustering.
     """)
     
-    # KPI Cards
     col1, col2, col3, col4 = st.columns(4)
     with col1:
         st.metric("Total Customers", len(df))
@@ -56,7 +78,6 @@ if page == "Business Intelligence":
 
     st.divider()
     
-    # Visualizations
     col_a, col_b = st.columns([2, 1])
     
     with col_a:
@@ -71,7 +92,6 @@ if page == "Business Intelligence":
         fig_bar = px.bar(df, x='Segment', y='Monetary', color='Segment', color_discrete_sequence=px.colors.sequential.Viridis)
         st.plotly_chart(fig_bar, use_container_width=True)
 
-    # 3D Scatter Plot
     st.subheader("3D Cluster View (Recency, Frequency, Monetary)")
     fig_3d = px.scatter_3d(df.sample(500), x='Recency', y='Frequency', z='Monetary', 
                            color='Segment', symbol='Segment', opacity=0.7)
@@ -92,7 +112,6 @@ elif page == "Prediction Engine":
         is_uk = st.selectbox("Located in UK?", [1, 0], format_func=lambda x: "Yes" if x == 1 else "No")
         
     if st.button("Predict CLV", type="primary"):
-        # Create input dataframe
         input_data = pd.DataFrame({
             'Recency': [recency],
             'Frequency': [frequency],
@@ -101,13 +120,11 @@ elif page == "Prediction Engine":
             'IsUK': [is_uk]
         })
         
-        # Predict
         pred_log = regressor.predict(input_data)[0]
         pred_val = np.expm1(pred_log)
         
         st.success(f"**Predicted 90-Day CLV: ${pred_val:,.2f}**")
         
-        # Determine Segment
         input_scaled = scaler.transform(input_data[['Recency', 'Frequency', 'Monetary']])
         cluster = kmeans.predict(input_scaled)[0]
         seg_map = {0: "New/Low", 1: "Loyal Customers", 2: "Big Spenders", 3: "At Risk"}
