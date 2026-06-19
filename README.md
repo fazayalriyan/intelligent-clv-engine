@@ -10,7 +10,9 @@ View Live Application [https://intelligent-clv-engine-gbykqqxvrgfujgbk7ivpoe.str
 Problem: Marketing budgets are wasted on low-value customers while high-value clients remain underserved.
 Solution: A predictive engine that identifies high-value segments and forecasts future revenue.
 Tech Stack: Python, Pandas, XGBoost, Scikit-Learn, Streamlit, Plotly.
+
 📂 Project Architecture
+
 intelligent-clv-engine/
 ├── data/ # Datasets (Raw & Processed)
 ├── models/ # Serialized ML Models (.pkl)
@@ -55,6 +57,5 @@ intelligent-clv-engine/
 4. Deployment: Packaged into an interactive Plotly dashboard for non-technical stakeholders.
 
 ✍️ Author
-
  Mohammed Fazayal
  
