@@ -4,7 +4,7 @@ PythonStreamlitScikit-LearnXGBoost
 An end-to-end Machine Learning system designed to predict Customer Lifetime Value (CLV) and automate customer segmentation for E-commerce retail. Transforms raw transactional data into actionable business insights to optimize marketing ROI.
 
 🚀 Live Demo
-View Live Application
+View Live Application [https://intelligent-clv-engine-gbykqqxvrgfujgbk7ivpoe.streamlit.app/]
 
 🎯 Business Impact
 Problem: Marketing budgets are wasted on low-value customers while high-value clients remain underserved.
