@@ -57,5 +57,6 @@ intelligent-clv-engine/
 4. Deployment: Packaged into an interactive Plotly dashboard for non-technical stakeholders.
 
 ✍️ Author
- Mohammed Fazayal
+
+Mohammed Fazayal
  
